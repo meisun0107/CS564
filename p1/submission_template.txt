@@ -1,0 +1,249 @@
+<?xml version="1.0"?>
+<pset>
+
+    <!--
+        CS 564, FALL 2020
+        PROBLEM SET 1 SUBMISSION TEMPLATE
+
+        Please copy and paste your SQL queries into the appropriate spots below. 
+
+        When submitting SQL queries, please do not include the initial 
+        %sql or %%sql IPython commands. Just include the SQL code.
+
+        DO NOT DELETE THE <![CDATA[ ... ]]> LINES IN EACH <answer> TAG!
+        Doing so will break the autograder. To avoid accidentally breaking
+        something, please leave all existing comments in this template
+        intact in your submission.
+    -->
+
+    <student>
+        <name>
+            <!-- Insert your full name on the line below. -->
+            Mei Sun
+        </name>
+        <netid>
+            <!-- Insert your NetID (NOT your student ID number!) below. -->
+			msun252
+        </netid>
+        <studentid>
+            <!-- Insert your student ID number below. -->
+			9081669823
+        </studentid>
+    </student>
+
+
+    <!-- BEGIN PROBLEM 1 -->
+    <answer number="1a">
+        <!-- Paste your solution to problem 1, part (a) below this line. --><![CDATA[
+		
+SELECT A.j AS i,A.i AS j, val FROM A GROUP BY A.j, A.i;
+
+        ]]><!-- End problem 1, part (a). -->
+    </answer>
+    <answer number="1b">
+        <!-- Paste your solution to problem 1, part (b) below this line. --><![CDATA[
+		
+SELECT SUM(A.val*B.val) AS dotProduct FROM A, B WHERE A.j = 2 AND B.j = 1 AND A.i = B.i;
+
+        ]]><!-- End problem 1, part (b). -->
+    </answer>
+    <answer number="1c">
+        <!-- Paste your solution to problem 1, part (c) below this line. --><![CDATA[
+		
+SELECT A.i, B.j, SUM(A.val*B.val) AS val FROM A,B WHERE B.i = A.j GROUP BY A.i, B.j;
+
+        ]]><!-- End problem 1, part (c). -->
+    </answer>
+    <answer number="1d">
+        <!-- Paste your solution to problem 1, part (d) below this line. --><![CDATA[
+SELECT A.i, B.j, SUM(A.val*B.val) AS val
+FROM A,(SELECT A1.i, A2.j, SUM(A1.val*A2.val) AS val 
+		FROM A A1,A A2 
+        WHERE A2.i = A1.j 
+        GROUP BY A1.i, A2.j) AS B
+WHERE B.i = A.j 
+GROUP BY A.i, B.j;
+
+        ]]><!-- End problem 1, part (d). -->
+    </answer>
+    <!-- END PROBLEM 1 -->
+
+
+    <!-- BEGIN PROBLEM 2 -->
+    <answer number="2a">
+        <!-- Paste your solution to problem 2, part (a) below this line. --><![CDATA[
+WITH t AS (SELECT S.store AS Store, SUM(S.weeklysales) AS ALLSales
+           FROM sales S, holidays H
+           WHERE S.weekdate = H.weekdate
+           AND H.isholiday = 'TRUE'
+           GROUP BY Store)
+SELECT * 
+FROM t
+WHERE ALLSales IN(SELECT MAX(ALLSales) FROM t)
+OR ALLSales IN(SELECT MIN(ALLSales) FROM t);
+
+        ]]><!-- End problem 2, part (a). -->
+    </answer>
+    <answer number="2b">
+        <!-- Paste your solution to problem 2, part (b) below this line. --><![CDATA[
+		
+WITH h AS (SELECT SUM(S.weeklysales)/COUNT(DISTINCT S.weekdate) as avg
+           FROM sales S, holidays H
+           WHERE S.weekdate = H.weekdate
+           AND H.isholiday = 'TRUE'),
+n AS (SELECT DISTINCT (S.weekdate) AS W, SUM(S.weeklysales) as WSum
+      FROM sales S, holidays H
+      WHERE S.weekdate = H.weekdate
+      AND H.isholiday = 'FALSE'
+      GROUP BY W)
+
+SELECT COUNT(n.W) AS NumNonHolidays
+FROM n,h
+WHERE n.WSum > h.avg;
+
+
+        ]]><!-- End problem 2, part (b). -->
+    </answer>
+    <answer number="2c">
+        <!-- Paste your solution to problem 2, part (c) below this line. --><![CDATA[
+SELECT ST.type, SUM(S.weeklysales) AS TotalSales
+FROM sales S,stores ST
+WHERE (strftime('%m',S.weekdate) = '06' OR strftime('%m',S.weekdate) = '07' OR strftime('%m',S.weekdate) = '08')
+       AND S.store = ST.store
+GROUP BY ST.type;
+
+
+        ]]><!-- End problem 2, part (c). -->
+    </answer>
+    <answer number="2d">
+        <!-- Paste your solution to problem 2, part (d) below this line. --><![CDATA[
+
+WITH salesData AS(SELECT store,weekdate,SUM(weeklysales) AS ws 
+                  FROM sales
+                  GROUP BY store,weekdate),
+average AS (SELECT AVG(temperature) AS avgT,AVG(cpi) AS avgC,AVG(unemploymentrate) AS avgU,AVG(fuelprice) AS avgF
+             FROM temporaldata),
+avgX AS(SELECT AVG(ws) AS x
+        FROM salesData)
+
+SELECT  cast('temperature' AS VARCHAR(20)) AS AttributeName,cast(SUM(T.temperature - A.avgT)*(S.ws - avgX.x) AS INTEGER)/ ABS(cast(SUM(T.temperature - A.avgT)*(S.ws - avgX.x) AS INTEGER))AS CorrelationSign
+FROM temporaldata T, average A,salesData S, avgX
+
+UNION
+   
+SELECT  cast('fuelprice' AS VARCHAR(20)) AS AttributeName,cast(SUM(T.fuelprice - A.avgF)*(S.ws - avgX.x) AS INTEGER)/ ABS(cast(SUM(T.fuelprice - A.avgF)*(S.ws - avgX.x) AS INTEGER)) AS CorrelationSign
+FROM temporaldata T, average A,salesData S, avgX
+
+UNION
+
+SELECT  cast('cpi' AS VARCHAR(20)) AS AttributeName,cast(SUM(T.cpi - A.avgC)*(S.ws - avgX.x) AS INTEGER)/ ABS(cast(SUM(T.cpi - A.avgC)*(S.ws - avgX.x) AS INTEGER)) AS CorrelationSign
+FROM temporaldata T, average A,salesData S, avgX
+
+UNION 
+
+SELECT  cast('unemploymentrate' AS VARCHAR(20)) AS AttributeName,cast(SUM(T.unemploymentrate - A.avgU)*(S.ws - avgX.x) AS INTEGER)/ ABS(cast(SUM(T.unemploymentrate - A.avgU)*(S.ws - avgX.x) AS INTEGER)) AS CorrelationSign
+FROM temporaldata T, average A,salesData S, avgX;
+
+        ]]><!-- End problem 2, part (d). -->
+    </answer>
+    <!-- END PROBLEM 2 -->
+
+
+    <!-- BEGIN PROBLEM 3 -->
+    <answer number="3a">
+        <!-- Paste your solution to problem 3, part (a) below this line. --><![CDATA[
+SELECT DISTINCT st.B AS company, st.d AS distance
+ FROM streets st 
+ WHERE st.A = 'UW-Madison' 
+ AND st.d <= 10
+
+UNION
+
+SELECT DISTINCT st2.B AS company, (st1.d+st2.d) AS distance
+ FROM streets st1, streets st2 
+ WHERE st1.A = 'UW-Madison' 
+ AND (st1.d+st2.d)<= 10
+ AND st1.B = st2.A 
+ AND st2.B != 'UW-Madison'
+
+UNION
+
+SELECT DISTINCT st3.B AS company, (st1.d+st2.d+st3.d) AS distance
+ FROM streets st1, streets st2,streets st3
+ WHERE st1.A = 'UW-Madison' 
+ AND (st1.d+st2.d+st3.d)<= 10
+ AND st1.B = st2.A AND st2.B != st1.A 
+ AND st2.B = st3.A AND st3.B != st2.A 
+ AND st3.B != 'UW-Madison' ;
+
+        ]]><!-- End problem 3, part (a). -->
+    </answer>
+    <answer number="3b">
+        <!-- Paste your solution to problem 3, part (b) below this line. --><![CDATA[
+DROP VIEW IF EXISTS table1;
+CREATE VIEW table1 AS 
+
+SELECT st.A AS A, st.B AS B, st.d AS d
+FROM streets st 
+WHERE st.A = 'UW-Madison' 
+OR st.B = 'UW-Madison'
+    
+UNION
+
+SELECT st1.A AS A, st2.B AS B, (st1.d + st2.d) AS d
+FROM streets st1,streets st2
+WHERE (st1.A = 'UW-Madison' OR st2.B = 'UW-Madison')
+AND st1.A != st2.B
+AND st1.B = st2.A
+
+UNION 
+
+SELECT st1.A AS A, st3.B AS B, (st1.d + st2.d + st3.d) AS d
+FROM streets st1,streets st2,streets st3
+WHERE (st1.A = 'UW-Madison' OR st3.B = 'UW-Madison')
+AND st1.B = st2.A
+AND st1.A != st2.B
+AND st2.B = st3.A
+AND st2.A != st3.B
+AND st1.A != st3.B;
+
+
+SELECT t1.A AS companyA, t2.B AS companyB, MIN(t1.d+t2.d) AS distance
+FROM table1 t1, table1 t2
+WHERE t1.B = 'UW-Madison' AND t2.A = 'UW-Madison' AND t1.A != t2.B
+GROUP BY t1.A, t2.B
+HAVING MIN(t1.d + t2.d) <= 15;
+
+
+        ]]><!-- End problem 3, part (b). -->
+    </answer>
+    <answer number="3c">
+        <!-- Paste your solution to problem 3, part (c) below this line. --><![CDATA[
+DELETE 
+FROM streets
+WHERE id IN(SELECT st1.id 
+               FROM streets st1,streets st2,streets st3 
+               WHERE st1.B = st2.A AND st2.B = st3.A AND st3.B = st1.A 
+               LIMIT 1);
+
+
+        ]]><!-- End problem 3, part (c). -->
+    </answer>
+    <answer number="3d">
+        <!-- Paste your solution to problem 3, part (d) below this line. --><![CDATA[
+WITH RECURSIVE
+    longestPath(a,b,pb,d) AS (
+        SELECT A,B,A,d FROM streets
+        UNION 
+        SELECT lp.a, st.B, st.A, lp.d + st.d
+        FROM longestPath lp, streets st
+        WHERE lp.b = st.A AND st.B != lp.a AND st.B != lp.pb)
+SELECT a AS A, b AS B, MAX(d) AS distance FROM longestPath;
+
+
+        ]]><!-- End problem 3, part (d). -->
+    </answer>
+    <!-- END PROBLEM 3 -->
+
+
+</pset>

@@ -1,0 +1,158 @@
+<?xml version="1.0"?>
+<pset>
+
+    <!--
+        CS 564, Fall 2020
+        PROBLEM SET 2 SUBMISSION TEMPLATE
+
+        Please copy and paste your SQL queries (and potentially Python and Latex code) 
+	into the appropriate spots below. 
+
+        When submitting SQL queries, please do not include the intitial 
+        %sql or %%sql IPython commands. Just include the SQL code.
+
+        DO NOT DELETE THE <![CDATA[ ... ]]> LINES IN EACH <answer> TAG!
+        Doing so will break the autograder. To avoid accidentally breaking
+        something, please leave all existing comments in this template
+        intact in your submission.
+    -->
+
+    <student>
+        <name>
+            <!-- Insert your full name on the line below. -->
+            Mei Sun
+        </name>
+        <netid>
+            <!-- Insert your NetID (NOT your student ID number!) below. -->
+			msun252
+        </netid>
+        <studentid>
+            <!-- Insert your student ID number below. -->
+			9081669823
+        </studentid>
+    </student>
+
+
+    <!-- BEGIN PROBLEM 1 -->
+    <answer number="1a">
+        <!-- Paste your solution to problem 1, part (a) below this line. --><![CDATA[
+			
+			SELECT *
+			FROM hospital h1, hospital h2
+			WHERE h1.provider = h2.provider
+			AND (h1.hospital != h2.hospital 
+			     OR h1.address != h2.address 
+			     OR h1.city != h2.city 
+			     OR h1.state != h2.state 
+			     OR h1.zip != h2.zip 
+			     OR h1.county != h2.county 
+			     OR h1.phone_number != h2.phone_number
+			     OR h1.hospital_type != h2.hospital_type
+			     OR h1.hospital_owner != h2.hospital_owner
+			     OR h1.emergency_service != h2.emergency_service
+			     OR h1.condition != h2.condition
+			     OR h1.measure_code != h2.measure_code)
+			LIMIT 2;
+
+
+        ]]><!-- End problem 1, part (a). -->
+    </answer>
+    <answer number="1b">
+        <!-- Paste your solution to problem 1, part (b) below this line. --><![CDATA[
+			
+			SELECT h1.zip AS zip,h1.city AS city,h1.state AS state
+			FROM hospital h1, hospital h2
+			WHERE h1.zip = h2.zip
+			AND (h1.city != h2.city OR h1.state != h2.state)
+			LIMIT 2;
+			
+        ]]><!-- End problem 1, part (b). -->
+    </answer>
+    <!-- END PROBLEM 1 -->
+
+
+    <!-- BEGIN PROBLEM 2 -->
+    <answer number="2a">
+        <!-- Paste your solution to problem 2, part (a) below this line. --><![CDATA[
+			
+			answer = True
+			explanation = "{A,B} is a superkey because the closure of {A,B} is {A,B,C,D,E,F} which contains all the attributes."
+			
+        ]]><!-- End problem 2, part (a). -->
+    </answer>
+    <answer number="2b">
+        <!-- Paste your solution to problem 2, part (b) below this line. --><![CDATA[
+			
+			answer = False
+			explanation = "According to the chase algorithm, at the end of the chase, there is not a row without subscripts, the row of {ABC} is [a b c d1 e f], the row of {CDE} is [a2 b2 c d e f2], the row of {EFA} is [a b3 c d1 e f],therefore the decomposition of {ABC},{CDE},{EFA} is not lossless-join." 
+
+
+        ]]><!-- End problem 2, part (b). -->
+    </answer>    
+    <answer number="2c">
+        <!-- Paste your solution to problem 2, part (c) below this line. --><![CDATA[
+			
+			answer = False
+			explanation = "{A}->{D},{D}->{F} are not FDs in any of the decompositions."
+
+
+        ]]><!-- End problem 2, part (c). -->
+    </answer>
+    <answer number="2d">
+        <!-- Paste your solution to problem 2, part (d) below this line. --><![CDATA[
+			
+			answer = True
+			explanation = "{A}->{E} is present in the FDs, and due to the transitivity,{A}->{D},{D}->{F} implies {A}->{F}, thus {A}->{E,F} logically implied by FDs present in the relation."
+        
+		]]><!-- End problem 2, part (d). -->
+    </answer>
+    <answer number="2e">
+        <!-- Paste your solution to problem 2, part (e) below this line. --><![CDATA[
+			
+			answer = False
+			explanation = "All the FDs are non-trivial, but all the attributes on the left side are not superkeys since neither the closure of {A} nor the closure of {D} are including all the attributes."
+        ]]><!-- End problem 2, part (e). -->
+    </answer>
+    <!-- END PROBLEM 2 -->
+
+    <!-- BEGIN PROBLEM 3 -->
+    <answer number="3a">
+        <!-- Paste your solution to problem 3, part (a) below this line. --><![CDATA[
+			
+			$\pi_{name}(\sigma_{affiliation="UW-Madison" \, and \, year = 2019}(Person \bowtie (Author \bowtie Article)))$
+
+        ]]><!-- End problem 3, part (a). -->
+    </answer>
+    <answer number="3b">
+        <!-- Paste your solution to problem 3, part (b) below this line. --><![CDATA[
+			
+			$AuthorInfo=Author \bowtie Person \\
+			JohnDoeAid=Author \backslash (\pi_{pid}(\sigma_{name="John \, Doe"}(Person)))\\ 
+			\pi_{name}(\sigma_{name != "John \, Doe"}(JohnDoeAid \bowtie AuthorInfo))$
+
+
+
+        ]]><!-- End problem 3, part (b). -->
+    </answer>
+    <answer number="3c">
+        <!-- Paste your solution to problem 3, part (c) below this line. --><![CDATA[
+			
+			$\gamma_{COUNT(aid)}(\sigma_{name="John \, Doe" \, and \, year \geq 2010 \, and \, year \leq 2020 }(Person \bowtie (Author \bowtie Article)))$
+			
+
+        ]]><!-- End problem 3, part (c). -->
+    </answer>
+    <answer number="3d">
+    <!-- Paste your solution to problem 3, part (d) below this line. --><![CDATA[
+		
+		$R=Person \bowtie (Author \bowtie Article) \\
+		SigmodID = \pi_{confid}(\sigma_{name = "SIGMOD"}(Conference)) \\
+		Article2018Name = \pi_{name}(\sigma_{year=2018}(R \bowtie SigmodID))\\
+		ArticleNot2019Name = \pi_{name}(\sigma_{year!=2019}(R \bowtie SigmodID))\\
+		Article2018Name \cap ArticleNot2019Name$
+		
+        ]]><!-- End problem 3, part (d). -->
+    </answer>
+    <!-- END PROBLEM 3 -->
+
+</pset>
