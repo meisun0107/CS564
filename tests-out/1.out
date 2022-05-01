@@ -1,0 +1,10 @@
+XV6_TEST_OUTPUT Index 0: pdx: 0x0, ptx: 0xC, present bit: 1, writable bit: 1, encrypted: 0
+XV6_TEST_OUTPUT Index 1: pdx: 0x0, ptx: 0xB, present bit: 1, writable bit: 1, encrypted: 0
+XV6_TEST_OUTPUT Index 2: pdx: 0x0, ptx: 0xA, present bit: 1, writable bit: 1, encrypted: 0
+XV6_TEST_OUTPUT Index 3: pdx: 0x0, ptx: 0x9, present bit: 1, writable bit: 1, encrypted: 0
+XV6_TEST_OUTPUT Index 4: pdx: 0x0, ptx: 0x8, present bit: 1, writable bit: 1, encrypted: 0
+XV6_TEST_OUTPUT Index 5: pdx: 0x0, ptx: 0x7, present bit: 1, writable bit: 1, encrypted: 0
+XV6_TEST_OUTPUT Index 6: pdx: 0x0, ptx: 0x6, present bit: 1, writable bit: 1, encrypted: 0
+XV6_TEST_OUTPUT Index 7: pdx: 0x0, ptx: 0x5, present bit: 1, writable bit: 1, encrypted: 0
+XV6_TEST_OUTPUT Index 8: pdx: 0x0, ptx: 0x4, present bit: 1, writable bit: 1, encrypted: 0
+XV6_TEST_OUTPUT Index 9: pdx: 0x0, ptx: 0x3, present bit: 1, writable bit: 1, encrypted: 0
